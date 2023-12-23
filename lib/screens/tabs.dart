@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meals/models/meal_model.dart';
 import 'package:meals/screens/categories.dart';
 import 'package:meals/screens/meals.dart';
+import 'package:meals/widgets/main_drawer.dart';
 
 class TabsScreen extends StatefulWidget {
   @override
@@ -13,6 +14,12 @@ class TabsScreen extends StatefulWidget {
 class _TabSScreenState extends State<TabsScreen> {
   int _selectedPage = 0;
   final List<MealModel> _favoriteMeals = [];
+
+  void _onSelectScreen(String identifier) {
+    if (identifier == "Meals") {
+      Navigator.pop(context);
+    }
+  }
 
   void _showInfoMessage(String message) {
     ScaffoldMessenger.of(context).clearSnackBars();
@@ -58,8 +65,12 @@ class _TabSScreenState extends State<TabsScreen> {
       activeTitle = "Your Favorite";
     }
     return Scaffold(
-      appBar: AppBar(title: Text(activeTitle),),
-      drawer: Drawer,
+      appBar: AppBar(
+        title: Text(activeTitle),
+      ),
+      drawer: MainDrawer(
+        onSelectScreen: _onSelectScreen,
+      ),
       body: activePage,
       bottomNavigationBar: BottomNavigationBar(
         onTap: (index) {
