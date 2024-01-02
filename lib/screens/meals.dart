@@ -3,11 +3,10 @@ import 'package:meals/models/meal_model.dart';
 import 'package:meals/widgets/meal_item.dart';
 
 class MealsScreen extends StatelessWidget {
-  MealsScreen({super.key, required this.meals, this.title, required this.onFavoriteClick});
+  MealsScreen({super.key, required this.meals, this.title});
 
   String? title;
   final List<MealModel> meals;
-  final void Function(MealModel mealModel) onFavoriteClick;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +36,7 @@ class MealsScreen extends StatelessWidget {
     if (meals.isNotEmpty) {
       content = ListView.builder(
         itemCount: meals.length,
-        itemBuilder: (ctx, idx) => MealItem(mealModel: meals[idx], onFavoriteClick: onFavoriteClick,),
+        itemBuilder: (ctx, idx) => MealItem(mealModel: meals[idx]),
       );
     }
 

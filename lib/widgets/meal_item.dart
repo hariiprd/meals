@@ -5,9 +5,8 @@ import 'package:meals/widgets/meal_item_trait.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class MealItem extends StatelessWidget {
-  const MealItem({super.key, required this.mealModel, required this.onFavoriteClick});
+  const MealItem({super.key, required this.mealModel});
   final MealModel mealModel;
-  final void Function(MealModel mealModel) onFavoriteClick;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +23,6 @@ class MealItem extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (ctx) => MealDetailScreen(
-                onFavoriteClick: onFavoriteClick,
                 mealModel: mealModel,
               ),
             ),

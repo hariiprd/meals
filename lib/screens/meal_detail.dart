@@ -1,25 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meals/models/meal_model.dart';
+import 'package:meals/providers/favorite_provider.dart';
 
-class MealDetailScreen extends StatelessWidget {
-  const MealDetailScreen(
-      {super.key, required this.mealModel, required this.onFavoriteClick});
+class MealDetailScreen extends ConsumerWidget {
+  const MealDetailScreen({super.key, required this.mealModel});
 
   final MealModel mealModel;
 
-  final void Function(MealModel mealModel) onFavoriteClick;
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favoriteMeals = ref.watch(favoriteMealsProvider);
+    Icon icon = Icon(Icons.star_border);
+    if (favoriteMeals.contains(mealModel)) {
+      icon = Icon(Icons.star);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(mealModel.title),
         actions: [
           IconButton(
             onPressed: () {
-              onFavoriteClick(mealModel);
+              var result = ref
+                  .read(favoriteMealsProvider.notifier)
+                  .favoriteClick(mealModel);
+              ScaffoldMessenger.of(context).clearSnackBars();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(result),
+                ),
+              );
             },
-            icon: Icon(Icons.star),
+            icon: icon,
           ),
         ],
       ),

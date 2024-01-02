@@ -1,46 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:meals/models/meal_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:meals/providers/favorite_provider.dart';
+import 'package:meals/providers/filter_provider.dart';
 import 'package:meals/screens/categories.dart';
+import 'package:meals/screens/filters.dart';
 import 'package:meals/screens/meals.dart';
 import 'package:meals/widgets/main_drawer.dart';
 
-class TabsScreen extends StatefulWidget {
+Map<Filter, bool> kFilter = {
+  Filter.glutenFree: false,
+  Filter.lactoseFree: false,
+  Filter.vegetarian: false,
+  Filter.vegan: false,
+};
+
+class TabsScreen extends ConsumerStatefulWidget {
   @override
-  State<TabsScreen> createState() {
+  ConsumerState<TabsScreen> createState() {
     return _TabSScreenState();
   }
 }
 
-class _TabSScreenState extends State<TabsScreen> {
+class _TabSScreenState extends ConsumerState<TabsScreen> {
   int _selectedPage = 0;
-  final List<MealModel> _favoriteMeals = [];
 
-  void _onSelectScreen(String identifier) {
-    if (identifier == "Meals") {
-      Navigator.pop(context);
-    }
-  }
-
-  void _showInfoMessage(String message) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
-  }
-
-  void _onFavoriteClick(MealModel mealModel) {
-    if (_favoriteMeals.contains(mealModel)) {
-      setState(() {
-        _favoriteMeals.remove(mealModel);
-        _showInfoMessage("Meal is no longer favorite");
-      });
-    } else {
-      setState(() {
-        _favoriteMeals.add(mealModel);
-        _showInfoMessage("Marked as favorite");
-      });
+  void _onSelectScreen(String identifier) async {
+    Navigator.pop(context);
+    if (identifier == "Filters") {
+      await Navigator.push<Map<Filter, bool>>(
+        context,
+        MaterialPageRoute(
+          builder: (ctx) => FilterScreen(),
+        ),
+      );
     }
   }
 
@@ -52,15 +45,17 @@ class _TabSScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final availableMeals = ref.watch(filteredMealsProvider);
+
     Widget activePage = CategoriesScreen(
-      onFavoriteClick: _onFavoriteClick,
+      availableMeals: availableMeals,
     );
     String activeTitle = "Categories";
 
     if (_selectedPage == 1) {
+      final favoriteMeals = ref.watch(favoriteMealsProvider);
       activePage = MealsScreen(
-        meals: _favoriteMeals,
-        onFavoriteClick: _onFavoriteClick,
+        meals: favoriteMeals,
       );
       activeTitle = "Your Favorite";
     }
